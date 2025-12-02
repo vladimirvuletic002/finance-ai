@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+	provider = "postgresql"
+	url = env("DATABASE_URL")
+}
+
+model User {
+	id           Int           @id @default(autoincrement())
+	email        String        @unique
+	passwordHash String
+	name         String?
+	createdAt    DateTime      @default(now())
+	updatedAt    DateTime      @updatedAt
+
+	categories   Category[]
+	transactions Transaction[]
+	insights     AIInsight[]
+}
+
+model Category {
+	id        Int           @id @default(autoincrement())
+	userId    Int
+	name      String
+	icon      String?       // optional
+	color     String?       // optional
+	createdAt DateTime      @default(now())
+
+	user       User         @relation(fields: [userId], references: [id])
+	transactions Transaction[]
+}
+
+model Transaction {
+	id          Int       @id @default(autoincrement())
+	userId      Int
+	categoryId  Int
+	type        TransactionType
+	amount      Decimal    @db.Decimal(10,2)
+	currency    String     @default("EUR")
+	note        String?
+	merchant    String?
+	date        DateTime
+	createdAt   DateTime   @default(now())
+
+	user      User     @relation(fields: [userId], references: [id])
+	category  Category @relation(fields: [categoryId], references: [id])
+}
+
+enum TransactionType {
+	INCOME
+	EXPENSE
+}
+
+model AIInsight {
+	id          Int        @id @default(autoincrement())
+	userId      Int
+	title       String
+	content     String     @db.Text
+	insightType InsightType
+	createdAt   DateTime   @default(now())
+
+	user       User        @relation(fields: [userId], references: [id])
+}
+
+enum InsightType {
+	SUMMARY
+	FORECAST
+	ADVICE
+}
