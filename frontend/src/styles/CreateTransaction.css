@@ -1,0 +1,27 @@
+.transaction-page-container{
+    display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  min-height: 100vh;
+  padding: 0 10px; /* helps on mobile */
+  box-sizing: border-box;
+  
+  max-width: 100%;
+}
+
+.create-transaction-container{
+    background-color: rgba(8, 75, 75, 0.591);
+    padding: 10px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-size: 1.1em; /* slightly smaller = better on mobile */
+    font-weight: bold;
+    /* responsive width */
+    width: min(1100px, 100%);
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}

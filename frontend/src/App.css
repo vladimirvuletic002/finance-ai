@@ -1,42 +1,260 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+html, body {
+  max-width: 100%;
+}
+
+.app-layout {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "navbar navbar"
+    "sidebar main";
+  min-height: 100vh;
+  background-image: url('./images/finance-background.jpg');
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.app-layout nav { 
+  grid-area: navbar; 
+  align-items: center; 
+  background-color: rgb(8, 75, 75); 
+  position: sticky; 
+  top: 0; 
+  z-index: 999;
+  height: 40px;
+  box-shadow: 1px 5px 10px rgba(0, 0, 0, 0.5); 
+  padding: 10px 20px 10px 20px; 
+  display: grid; 
+  grid-template-columns: 200px auto auto 1fr; 
+  column-gap: 20px;
+  grid-template-areas: "logo home about button user";
+}
+
+.app-layout aside { 
+  grid-area: sidebar; 
+  display: inline-flex; 
+  overflow-wrap: break-word;
+  
+  position: fixed; 
+  top: 62px;
+  height: calc(100vh - 62px);
+  align-self: start;
+}
+.app-layout main { grid-area: main; }
+
+  .navLogo{
+    grid-area: logo;
+    border-radius: 5px;
+    background-color: white;
+    color: #07b0b0ff;
+    width: 100px;
+    text-align: center;
+    font-size: 14px;
+    padding: 3px;
+    font-weight: bold;
+    font-style: italic;
+    cursor: pointer;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .navLogo:hover{
+    box-shadow: 1px 1px 10px #07b0b0ff;
+  }
+
+  .navHome{
+    grid-area: home;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .navAbout{
+    grid-area: about;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .navUser{
+    grid-area: user;
+    display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  }
+
+  .navHome, .navAbout{
+    color: #07b0b0ff;
+  }
+
+  .navHome:hover, .navAbout:hover{
+    color: white;
+    cursor: pointer;
+  }
+
+.navLogoutBtn{
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.navLoginBtn{
+  font-size: 14px;
+  font-weight: 800;
+    text-transform: uppercase;
+}
+
+#sidebarContent{
+  background-color: rgb(8, 75, 75);
+  width: 100%;
+  padding: 10px;
+  height: 100%;
+  transition: display 1s;
+  border-right: 1px solid #07b0b0ff;
+}
+
+.showSidebar{
+  height: 40px;
+  border-radius: 20px;
+  width: 40px;
+  font-size: 18px;
+  padding: 5px;
+  justify-content: center;
+  justify-items: center;
+  align-items: center;
+  box-shadow: -3px 1px 10px rgb(0, 0, 0);
+  transition: display 1s;
+}
+
+.app-container {
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  margin-top: 20px;
+  justify-items: center;
+  min-height: 100vh;
+  
+}
+
+.greeting-container {
+  background-color: rgba(8, 75, 75, 0.591); 
+  padding: 6px 10px 6px 10px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   text-align: center;
+  font-size: 1.4em;
+  font-weight: bold;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.show{
+    display: none;
+    transition: display 1s;
+   }
+
+@media(max-width: 650px){
+  .app-layout{
+    grid-template-columns: 1fr;
+    grid-template-areas: "navbar" "main";
+  } 
+  
+  .app-layout nav{
+    grid-template-columns:  auto auto auto auto;
+   }
+
+   
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+
+/* dropdown meni */
+.navUserMenuWrapper {
+  grid-area: user;
+  width: 100%;
+  position: relative; /* omogućava absolute dropdown pozicioniranje */
+  display: none; /* inicijalno skriven */
+}
+
+/* hamburger dugme */
+.hamburger {
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+/* dropdown meni ispod hamburgera */
+.dropdownMenu {
+  position: fixed;
+  top: 62px;     /* ISPOD hamburgera */
+  left: 0;
+  right: 0;
+  background-color: rgb(8, 75, 75);
+  padding: 10px 15px;
+  border-radius: 8px;
+  box-shadow: 0px 3px 8px rgba(0,0,0,0.5);
+  width: 90vw;
+  justify-content: center;
+  justify-items: center;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  
+}
+
+.dropdownMenu button {
+  background: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  color: rgb(8, 75, 75);
+}
+
+.dropdownMenu button:hover {
+  opacity: 0.8;
+}
+
+@media (max-width: 550px) {
+
+  .app-container {
+    align-items: stretch;
+    padding: 0 10px;
   }
-  to {
-    transform: rotate(360deg);
+
+  .navUser {
+    display: none;
+  }
+
+  .hamburger{
+    display: block;
+  }
+
+  .navUserMenuWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .app-layout aside{
+    max-width: 300px;
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+.dashboard-link{
+  color: white;
+  font-weight: 1000;
+}
+
+.dashboard-link:hover{
+  color: #07b0b0ff;
+  cursor: pointer;
+}
+
+@media (max-width: 380px){
+  .app-layout nav{
+    font-size: 0.6em;
   }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
 }

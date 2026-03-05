@@ -1,0 +1,177 @@
+/* ---------- Layout container ---------- */
+.dashboard-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  min-height: 100vh;
+  padding: 0 10px; /* helps on mobile */
+  box-sizing: border-box;
+  
+  max-width: 100%;
+  
+}
+
+.transactions-container {
+  background-color: rgba(8, 75, 75, 0.591);
+  padding: 10px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-size: 1.1em; /* slightly smaller = better on mobile */
+  font-weight: bold;
+  /* responsive width */
+  width: min(1100px, 100%);
+  box-sizing: border-box;
+}
+
+.transactions-header{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  text-align: left;
+  margin-bottom: 8px;
+  
+}
+
+.tarnsaction-title{
+  
+}
+
+.add-transaction-button{
+  font-size: 16px;
+  height: 40px;
+  margin-top: 20px;
+}
+
+/* ---------- Table wrapper ---------- */
+.transactions-table {
+  border-radius: 8px;
+  font-size: 14px;
+  overflow: hidden;
+  overflow-x: auto;
+  margin-top: 4px;
+  margin-bottom: 20px;
+  box-shadow: 1px 2px 20px rgb(0, 0, 0);
+  background: transparent;
+  width: 100%;
+  max-width: 100%;
+}
+
+
+/* ---------- Desktop "table" grid ---------- */
+.transactions-table-th,
+.transactions-row{
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr 0.9fr 0.8fr 1.6fr 1fr; /* better proportions */
+  gap: 2px;
+  align-items: center;
+}
+
+.transactions-table-th div{
+  box-shadow: 6px 1px 10px rgb(1, 27, 27);
+  padding: 10px 12px;
+  white-space: nowrap;
+  background-color: rgb(5, 53, 53);
+}
+
+.transactions-row{
+  color: rgb(8, 75, 75);
+  background-color: white;
+}
+
+.transactions-row div {
+  box-shadow: 6px 1px 12px rgba(5, 53, 53, 0.602);
+  padding: 10px 12px;
+
+  /* avoid blowing out layout on long notes/merchants */
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.transactions-table-empty{
+  padding: 14px 10px;
+  background: white;
+  color: rgb(8, 75, 75);
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+/* ---------- Auth text ---------- */
+.dashboard-span{
+  font-weight: 1000;
+  color: white;
+}
+
+.dashboard-span:hover{
+  cursor: pointer;
+  color: #07b0b0ff;
+}
+
+/* =========================================================
+   RESPONSIVE BREAKPOINTS
+   ========================================================= */
+
+/* Tablet: slightly tighter spacing */
+@media (max-width: 900px) {
+  .transactions-container {
+    padding: 10px 16px;
+    font-size: 1em;
+  }
+
+  .transactions-table-th div,
+  .transactions-row div {
+    padding: 10px 10px;
+    font-size: 0.8em;
+  }
+
+  .transactions-table-th,
+  .transactions-row{
+    grid-template-columns: 1.2fr 0.9fr 0.9fr 0.8fr 1.4fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .transactions-container {
+    padding: 10px 12px;
+    font-size: 1em;
+  }
+
+  .transactions-table-th div,
+  .transactions-row div {
+    padding: 6px 6px;
+    font-size: 0.6em;
+  }
+
+  .transactions-header{
+    font-size: 0.8em;
+  }
+
+  .add-transaction-button{
+    font-size: 8x;
+    height: 40px;
+    margin-top: 10px;
+
+  }
+ 
+}
+
+@media (max-width: 380px) {
+    .transactions-container{
+        font-size: 0.6em;
+    }
+
+  .transactions-table-th div,
+  .transactions-row div {
+    padding: 3px 3px;
+    font-size: 0.3em;
+  }
+
+  .add-transaction-button{
+    font-size: 8px;
+    height: 30px;
+    margin-top: 2px;
+  }
+ 
+}

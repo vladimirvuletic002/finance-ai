@@ -41,7 +41,7 @@ class AuthService {
 
         const token = signToken( {email: user.email}, String(user.id));
 
-        return { user: { id: user.id, email: user.email }, token };
+        return { user: { id: user.id, email: user.email, name: user.name }, token };
     }
 
     static async me(userId: number) {

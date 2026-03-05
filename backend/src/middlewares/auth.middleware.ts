@@ -17,7 +17,7 @@ export default function authMiddleware(req: AuthRequest, res: Response, next: Ne
 	try{
 		const secret: Secret = process.env.JWT_SECRET_KEY || 'dev_secret';
 		const payload = jwt.verify(token,secret) as any;
-		req.user = { id: payload.sub, email: payload.email };
+		req.user = { id: Number(payload.sub), email: payload.email };
 		next();
 	}
 	catch(err){

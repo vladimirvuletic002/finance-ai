@@ -11,21 +11,27 @@ const defaultCategories = [
 ];
 
 async function seedCategories() {
-  const users = await prisma.user.findMany();
-
-  for (const user of users) {
-    const count = await prisma.category.count({
-      where: { userId: user.id }
+  // Ensure global default categories exist (isDefault = true, userId = null)
+  for (const c of defaultCategories) {
+    // cast to any to avoid TypeScript errors until Prisma client is regenerated
+    const existing = await prisma.category.findFirst({
+      where: ({
+        isDefault: true,
+        name: c.name
+      } as any)
     });
 
-    if (count === 0) {
-      await prisma.category.createMany({
-        data: defaultCategories.map(c => ({
-          ...c,
-          userId: user.id
-        }))
+    if (!existing) {
+      await prisma.category.create({
+        // cast data as any to avoid TS errors until `prisma generate` is run
+        data: ({
+          name: c.name,
+          icon: c.icon,
+          color: c.color,
+          isDefault: true
+        } as any)
       });
-      console.log(`Added categories for user ${user.email}`);
+      console.log(`Created default category ${c.name}`);
     }
   }
 
