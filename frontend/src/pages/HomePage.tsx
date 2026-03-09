@@ -13,7 +13,8 @@ export default function HomePage() {
         {!user ? (
           <p>Hello and Welcome to the AI Finance Assistant app!</p>
         ) : (
-          <><p>Welcome, {user.name}! Let's discuss Your finance.</p>
+          <><p>Greetings, <span className='username-bold'>{user.name}</span></p>
+            <p>Let's discuss Your finance.</p>
             <p>Go to the <span className='dashboard-link' onClick={() => navigate('/dashboard')}>Dashboard</span></p>
           </>
         )}

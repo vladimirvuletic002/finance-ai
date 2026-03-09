@@ -9,6 +9,7 @@ import NavbarX from './components/NavbarX';
 import Sidebar from './components/Sidebar';
 import AboutPage from './pages/AboutPage';
 import DashboardPage from './pages/DashboardPage';
+import CreateTransactionPage from './pages/CreateTransactionPage';
 
 function App() {
 
@@ -29,6 +30,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path='/add-transaction' element={<CreateTransactionPage />} />
           </Routes>
         </main>
         </div>

@@ -22,7 +22,7 @@ class TransactionService{
             prisma.transaction.findMany({
                 where,
                 include: { category: { select: {id: true, name:true}}},
-                orderBy: {date: 'desc'},
+                orderBy: {id: 'desc'},
                 skip: (page-1) * pageSize,
                 take: pageSize
             }),

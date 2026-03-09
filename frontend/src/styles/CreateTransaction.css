@@ -22,6 +22,40 @@
     width: min(1100px, 100%);
     box-sizing: border-box;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: auto 2fr;
+    row-gap: 10px;
+}
+
+.create-transaction-form{
+  grid-row: 2;
+  display: grid;
+  grid-template-rows: 1fr 1fr auto auto;
+  grid-template-columns: 1fr 1fr 1fr;
+  row-gap: 20px;
+  text-align: left;
+  margin-bottom: 8px;
+  
+}
+
+.currency-field{
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.date-field{
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.create-transaction-btn{
+  grid-row: 4;
+  grid-column: 2;
+}
+
+.create-transaction-form div label{
+  margin: 10px;
+}
+
+.text-area{
+  resize: none;
 }

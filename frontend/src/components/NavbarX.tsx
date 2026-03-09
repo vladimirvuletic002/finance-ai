@@ -16,7 +16,7 @@ const NavbarX = () => {
 
     return (
         <nav id="navbar">
-            <div className="navLogo">
+            <div className="navLogo" onClick={() => navigate('/')}>
                 FINANCE-AI
             </div>
 

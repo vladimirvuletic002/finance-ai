@@ -4,12 +4,18 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { transactionListApi as ListService } from '../services/TransactionService';
 import type { ListObj } from '../models/Transaction';
+import { formatAmount } from '../utils/formatAmount';
 
 export const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString("en-GB");
 
-export const incomeOrExpense = (amount: string, type: string) =>
-    type === 'INCOME' ? `+${amount}` : `-${amount}`;
+export const incomeOrExpense = (amount: string, type: string) => {
+    const formatted = formatAmount(amount);
+
+  return type === "INCOME"
+    ? `+${formatted}`
+    : `-${formatted}`;
+};
 
 export default function DashboardPage() {
     const { user } = useAuth();
@@ -70,14 +76,14 @@ export default function DashboardPage() {
                 <div>Loading Transactions</div>
             ) : (
                 <>
-                <div className='transactions-header'><h2 className='tarnsaction-title'>Transactions</h2><button className='add-transaction-button'> + New Transaction</button></div>
+                <div className='transactions-header'><h2 className='tarnsaction-title'>Transactions</h2><button className='add-transaction-button' onClick={() => navigate('/add-transaction')}> + New Transaction</button></div>
                 <div className='transactions-table'>
                     <div className='transactions-table-th'>
                         <div>Category</div>
                         <div>Type</div>
                         <div>Amount</div>
                         <div>Currency</div>
-                        <div>Note</div>
+                        <div>Merchant</div>
                         <div>Date</div>
 
                     </div>
@@ -89,9 +95,9 @@ export default function DashboardPage() {
                             <div key={t.id} className='transactions-row'>
                                 <div className='transactions-category'>{t.category.name}</div>
                                 <div>{t.type}</div>
-                                <div>{incomeOrExpense(t.amount,t.type)}</div>
+                                <div className={t.type === "INCOME" ? "amount-income" : "amount-expense"}>{incomeOrExpense(t.amount,t.type)}</div>
                                 <div>{t.currency}</div>
-                                <div>{t.note}</div>
+                                <div>{t.merchant}</div>
                                 <div>{formatDate(t.date)}</div>
                             </div>
                         ))

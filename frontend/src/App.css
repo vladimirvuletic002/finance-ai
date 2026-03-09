@@ -1,5 +1,11 @@
 html, body {
   max-width: 100%;
+  color: white;
+}
+
+button{
+  background-color: rgb(5, 53, 53);
+  color: white;
 }
 
 .app-layout {
@@ -139,7 +145,7 @@ html, body {
 
 .greeting-container {
   background-color: rgba(8, 75, 75, 0.591); 
-  padding: 6px 10px 6px 10px;
+  padding: 6px 20px 6px 20px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   text-align: center;
@@ -148,6 +154,11 @@ html, body {
   word-wrap: break-word;
   overflow-wrap: break-word;
   
+}
+
+.username-bold{
+  font-size: 1.5em;
+  font-weight: 800;
 }
 
 .show{

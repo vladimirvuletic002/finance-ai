@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { type TransactionResponse, type TransactionCreate, type TransactionCreateResponse } from '../models/Transaction';
+import { type TransactionResponse, type TransactionCreatePayload, type TransactionCreateResponse } from '../models/Transaction';
 import { handleError } from '../helpers/ErrorHandler';
 
 const api = import.meta.env.VITE_API_URL;
@@ -27,7 +27,7 @@ export const transactionListApi = async (page = 1, pageSize = 20) => {
     }
 }
 
-export const transactionCreateApi = async (payload: TransactionCreate) => {
+export const transactionCreateApi = async (payload: TransactionCreatePayload) => {
     try{
         const data = await axios.post<TransactionCreateResponse>(`${api}/transactions/`, payload);
         return data;

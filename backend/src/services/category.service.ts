@@ -4,8 +4,8 @@ import { HttpException } from "../utils/http-exception";
 class CategoryService {
 
     static async list(userId: number) {
-        return await prisma.category.findMany({
-            where: {
+        const data = await prisma.category.findMany({
+	            where: {
             OR: [
                 { isDefault: true },           // Global default categories
                 { userId: userId }              // User's own categories
@@ -13,9 +13,11 @@ class CategoryService {
             },
             orderBy: [
             { isDefault: 'desc' }, // Defaults first
-            { name: 'asc' }        // Then alphabetically
+            { id: 'asc' }        
             ]
         }); 
+
+        return { data };
     }
 
     static async create(userId: number, payload: any) {

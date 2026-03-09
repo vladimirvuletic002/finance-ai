@@ -25,12 +25,12 @@ export type ListObj = {
 
 }
 
-export type TransactionCreate = {
+export type TransactionCreatePayload = {
     categoryId: number,
     type: string,
     amount: number,
     currency: string,
-    note: string,
+    note?: string,
     merchant: string,
     date: string,
 }
@@ -42,7 +42,7 @@ export type TransactionCreateResponse = {
         type: string,
         amount: string,
         currency: string,
-        note: string,
+        note?: string,
         merchant: string,
         date: string
     }
