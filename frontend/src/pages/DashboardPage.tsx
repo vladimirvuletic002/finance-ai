@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { transactionListApi as ListService } from '../services/TransactionService';
 import type { ListObj } from '../models/Transaction';
 import { formatAmount } from '../utils/formatAmount';
+import AIChatPanel from '../components/AIChatPanel';
 
 export const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString("en-GB");
@@ -104,6 +105,11 @@ export default function DashboardPage() {
                     )}
 
                 </div>
+
+                <div style={{ marginTop: '24px' }}>
+                    <AIChatPanel />
+                </div>
+
                 </>
             )}
           </>

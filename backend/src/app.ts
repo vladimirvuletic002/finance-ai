@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-
 import apiRouter from './routes';
 import { errorMiddleware } from './middlewares/error.middleware';
 import logger from './config/logger';
