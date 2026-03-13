@@ -79,6 +79,7 @@
 .ai-message-content {
     white-space: pre-wrap;
     word-break: break-word;
+    font-size: 0.8em;
 }
 
 .ai-chat-input-row {
@@ -88,7 +89,7 @@
 }
 
 .ai-chat-input {
-    width: 100%;
+    width: 98%;
     border-radius: 12px;
     border: 1px solid #334155;
     background: #0b1120;
