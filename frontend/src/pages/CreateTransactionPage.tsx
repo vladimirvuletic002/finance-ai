@@ -116,12 +116,16 @@ export default function CreateTransactionPage() {
                 toast.success("Transaction created successfully");
 
                 reset({
+                    categoryId: -1,
+                    amount: 0,
                     currency: "EUR",
+                    merchant: "",
+                    note: "",
                     date: new Date().toISOString().split("T")[0],
                 });
 
                 setAmountInput("");
-                navigate("/dashboard");
+                //navigate("/dashboard");
             }
         } catch {
             toast.error("Failed to create transaction");

@@ -18,6 +18,7 @@ model User {
 	categories   Category[]
 	transactions Transaction[]
 	insights     AIInsight[]
+	savingsGoals SavingsGoal[]
 }
 
 model Category {
@@ -59,18 +60,60 @@ enum TransactionType {
 }
 
 model AIInsight {
-	id          Int        @id @default(autoincrement())
-	userId      Int
-	title       String
-	content     String     @db.Text
-	insightType InsightType
-	createdAt   DateTime   @default(now())
+	id                             Int      @id @default(autoincrement())
+	userId                         Int
 
-	user       User        @relation(fields: [userId], references: [id])
-}
+	month                          Int
+	year                           Int
+
+	spendingChangeCurrentMonth     Decimal  @db.Decimal(10,2)
+	spendingChangePreviousMonth    Decimal  @db.Decimal(10,2)
+	spendingChangePercent          Decimal  @db.Decimal(10,2)
+	spendingChangeDirection        String
+
+	predictedRecurringCosts        Decimal  @db.Decimal(10,2)
+
+	topCategoryId                  Int?
+	topCategoryName                String?
+	topCategoryTotalSpent          Decimal  @db.Decimal(10,2)
+	currency                       String
+
+	savingsGoalTitle               String?
+	savingsGoalAmount              Decimal  @db.Decimal(10,2)
+	currentSavingsEstimate         Decimal  @db.Decimal(10,2)
+	savingsProgressPercent         Decimal  @db.Decimal(10,2)
+	savingsRemainingAmount         Decimal  @db.Decimal(10,2)
+
+	aiRecommendation               String
+
+	recurringTransactionsJson      Json?
+	metaJson                       Json?
+
+	createdAt                      DateTime @default(now())
+	updatedAt                      DateTime @updatedAt
+
+	user User @relation(fields: [userId], references: [id])
+
+	@@index([userId, year, month])
+	}
 
 enum InsightType {
 	SUMMARY
 	FORECAST
 	ADVICE
+}
+
+model SavingsGoal {
+	id            Int      @id @default(autoincrement())
+	userId        Int
+	title         String   @default("Main savings goal")
+	targetAmount  Decimal  @db.Decimal(10,2)
+	currency      String   @default("EUR")
+	isActive      Boolean  @default(true)
+	createdAt     DateTime @default(now())
+	updatedAt     DateTime @updatedAt
+
+	user User @relation(fields: [userId], references: [id])
+
+	@@index([userId, isActive])
 }

@@ -6,6 +6,7 @@ import { transactionListApi as ListService } from '../services/TransactionServic
 import type { ListObj } from '../models/Transaction';
 import { formatAmount } from '../utils/formatAmount';
 import AIChatPanel from '../components/AIChatPanel';
+import AIInsightsSection from '../components/AIInsightsSection';
 
 export const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString("en-GB");
@@ -26,6 +27,9 @@ export default function DashboardPage() {
     const [loading, setLoading] = useState(true);
     const [err, setErr] = useState("");
 
+    const sortedRows = [...rows].sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
     const [page, setPage] = useState(1);
     const pageSize = 20;
 
@@ -77,6 +81,7 @@ export default function DashboardPage() {
                 <div>Loading Transactions</div>
             ) : (
                 <>
+                <AIInsightsSection />
                 <div className='transactions-header'><h2 className='tarnsaction-title'>Transactions</h2><button className='add-transaction-button' onClick={() => navigate('/add-transaction')}> + New Transaction</button></div>
                 <div className='transactions-table'>
                     <div className='transactions-table-th'>
@@ -89,14 +94,16 @@ export default function DashboardPage() {
 
                     </div>
 
-                    {rows.length === 0 ? (
+                    {sortedRows.length === 0 ? (
                         <div className='transactions-table-empty'>No Transactions.</div>
                     ) : (
-                        rows.map((t) => (
+                        sortedRows.map((t) => (
                             <div key={t.id} className='transactions-row'>
                                 <div className='transactions-category'>{t.category.name}</div>
                                 <div>{t.type}</div>
-                                <div className={t.type === "INCOME" ? "amount-income" : "amount-expense"}>{incomeOrExpense(t.amount,t.type)}</div>
+                                <div className={t.type === "INCOME" ? "amount-income" : "amount-expense"}>
+                                    {incomeOrExpense(t.amount, t.type)}
+                                </div>
                                 <div>{t.currency}</div>
                                 <div>{t.merchant}</div>
                                 <div>{formatDate(t.date)}</div>

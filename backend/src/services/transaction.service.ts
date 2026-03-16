@@ -1,5 +1,6 @@
 import prisma from "../db/prisma";
 import { HttpException } from "../utils/http-exception";
+import AIInsightSnapshotService from "./ai/ai-insight-snapshot.service";
 
 class TransactionService{
     
@@ -43,7 +44,7 @@ class TransactionService{
 
         if(!category) throw new HttpException(400, 'Invalid category!');
 
-        return await prisma.transaction.create({
+        const transaction = await prisma.transaction.create({
             data: {
                 userId,
                 categoryId: payload.categoryId,
@@ -55,6 +56,10 @@ class TransactionService{
                 date: new Date(payload.date) 
             }
         });
+
+        await AIInsightSnapshotService.refreshForUser(userId);
+
+        return transaction;
 
     }
 

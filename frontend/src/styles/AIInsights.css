@@ -1,0 +1,140 @@
+.ai-insights-wrapper {
+  margin-top: 24px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.ai-insights-header {
+  text-align: left;
+}
+
+.ai-insights-header h2 {
+  margin: 0 0 6px 0;
+  color: white;
+}
+
+.ai-insights-header p {
+  margin: 0;
+  color: #dbeafe;
+  font-size: 0.95rem;
+}
+
+.ai-insights-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.ai-card,
+.saving-goal-card {
+  background: rgba(255, 255, 255, 0.96);
+  color: rgb(8, 75, 75);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 1px 2px 20px rgba(0, 0, 0, 0.28);
+  text-align: left;
+}
+
+.ai-card-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  opacity: 0.8;
+  margin-bottom: 10px;
+}
+
+.ai-card-value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+.ai-card-subtext {
+  font-size: 0.92rem;
+  opacity: 0.88;
+  line-height: 1.4;
+}
+
+.saving-goal-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.saving-goal-header h3 {
+  margin: 0 0 6px 0;
+}
+
+.saving-goal-header p {
+  margin: 0;
+}
+
+.saving-goal-progress-text {
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+
+.saving-goal-progress-bar {
+  width: 100%;
+  height: 14px;
+  background: #dbeafe;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.saving-goal-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0891b2, #22c55e);
+  border-radius: 999px;
+}
+
+.saving-goal-stats {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+}
+
+.saving-goal-recommendation {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.saving-goal-recommendation span {
+  font-weight: 800;
+}
+
+.saving-goal-edit-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.saving-goal-input {
+  min-width: 180px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+}
+
+.saving-goal-save-btn {
+  background: #0f766e;
+  color: white;
+  border-radius: 10px;
+  padding: 10px 16px;
+}
+
+@media (max-width: 900px) {
+  .ai-insights-grid {
+    grid-template-columns: 1fr;
+  }
+}
