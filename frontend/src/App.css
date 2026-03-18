@@ -17,7 +17,7 @@ button{
     "sidebar main";
   min-height: 100vh;
   background-image: url('./images/finance-background.jpg');
-  background-position: 50%;
+  background-position: 100%;;
   background-repeat: no-repeat;
   background-size: cover;
 }
@@ -153,12 +153,24 @@ button{
   font-weight: bold;
   word-wrap: break-word;
   overflow-wrap: break-word;
-  
+}
+
+.about-container{
+  background-color: rgba(8, 75, 75, 0.591); 
+  padding: 20px 20px 30px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-size: 1.4em;
+  font-weight: bold;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .username-bold{
   font-size: 1.5em;
   font-weight: 800;
+  color: #07b0b0ff;
 }
 
 .show{

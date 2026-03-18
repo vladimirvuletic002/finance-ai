@@ -9,7 +9,7 @@
     color: #07b0b0ff;
 }
 
-.login-form {
+.auth-form {
     background-color: rgb(8, 75, 75);
     padding: 2em;
     border-radius: 10px;
@@ -24,6 +24,12 @@
     margin-bottom: 15px;
     display: flex;
     flex-direction: column;
+}
+
+.auth-register-link:hover{
+    cursor: pointer;
+    color: white;
+    text-shadow: 0 0 5px #07b0b0ff;
 }
 
 input{

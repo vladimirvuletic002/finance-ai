@@ -3,6 +3,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify';
 import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage';
 import HomePage from './pages/HomePage'
 import { AuthProvider } from './Context/AuthContext';
 import NavbarX from './components/NavbarX';
@@ -28,6 +29,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path='/add-transaction' element={<CreateTransactionPage />} />

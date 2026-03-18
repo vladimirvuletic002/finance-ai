@@ -36,6 +36,7 @@ model Category {
 	transactions Transaction[]
 
 	@@index([userId])
+	@@unique([userId, name])
 }
 
 model Transaction {
