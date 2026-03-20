@@ -12,7 +12,7 @@ export default function AIInsightsSection() {
 
     const [goalAmountInput, setGoalAmountInput] = useState("");
     const [savingGoalUpdating, setSavingGoalUpdating] = useState(false);
-    
+
 
     const loadInsights = async () => {
         const resp = await getAIInsightsApi();
@@ -96,8 +96,8 @@ export default function AIInsightsSection() {
                 : `You spent ${data.spendingChangePercent}% more than last month`;
 
     const recurringTransactions = Array.isArray(data.recurringTransactionsJson)
-    ? data.recurringTransactionsJson
-    : [];
+        ? data.recurringTransactionsJson
+        : [];
 
     return (
         <section className="ai-insights-wrapper">
@@ -130,9 +130,9 @@ export default function AIInsightsSection() {
                         {recurringTransactions.length === 0
                             ? "No stable recurring payments detected yet."
                             : recurringTransactions
-                                  .slice(0, 3)
-                                  .map(item => `${item.merchant} (${formatAmount(item.averageAmount)} ${item.currency})`)
-                                  .join(" • ")}
+                                .slice(0, 3)
+                                .map(item => `${item.displayLabel} (${formatAmount(item.averageAmount)} ${item.currency})`)
+                                .join(" • ")}
                     </div>
                 </div>
 
