@@ -1,9 +1,11 @@
 import { GoogleGenAI } from "@google/genai";
+import { withGeminiRetry } from "./ai-retry.js";
+import config from "../../config/env.js";
 
 class AIRecommendationService {
     private static getClient() {
         return new GoogleGenAI({
-            apiKey: process.env.GEMINI_API_KEY
+            apiKey: config.GEMINI_API_KEY
         });
     }
 
@@ -48,14 +50,16 @@ ${JSON.stringify(summary, null, 2)}
 `.trim();
 
         try {
-            const response = await ai.models.generateContent({
-                model: "gemini-2.5-flash-lite",
-                contents: prompt,
-                config: {
-                    maxOutputTokens: 120,
-                    temperature: 0.4
-                }
-            });
+            const response = await withGeminiRetry(() =>
+                ai.models.generateContent({
+                    model: "gemini-2.5-flash-lite",
+                    contents: prompt,
+                    config: {
+                        maxOutputTokens: 120,
+                        temperature: 0.4
+                    }
+                })
+            );
 
             return response.text?.trim() || "Try reducing your largest recurring and category-based expenses to reach your goal faster.";
         } catch {

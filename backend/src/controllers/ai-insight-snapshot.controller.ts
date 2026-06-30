@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import AIInsightSnapshotService from "../services/ai/ai-insight-snapshot.service";
+import AIInsightSnapshotService from "../services/ai/ai-insight-snapshot.service.js";
 
 class AIInsightSnapshotController {
     static async getLatest(req: Request, res: Response, next: NextFunction) {

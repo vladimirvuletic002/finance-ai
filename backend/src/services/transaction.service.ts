@@ -1,22 +1,22 @@
-import prisma from "../db/prisma";
-import { HttpException } from "../utils/http-exception";
-import AIInsightSnapshotService from "./ai/ai-insight-snapshot.service";
+import prisma from "../db/prisma.js";
+import { HttpException } from "../utils/http-exception.js";
+import type { ListTransactionsQuery } from "../schemas/transaction.schema.js";
+import AIInsightSnapshotService from "./ai/ai-insight-snapshot.service.js";
 
 class TransactionService{
-    
-    static async list(userId: number, query: any){
-        const page = Number(query.page || 1);
-        const pageSize = Number(query.pageSize || 20);
+
+    static async list(userId: number, query: ListTransactionsQuery){
+        const { page, pageSize } = query;
 
         const where: any = { userId };
         if(query.type) where.type = query.type;
 
-        if(query.categoryId) where.categoryId = Number(query.categoryId);
+        if(query.categoryId) where.categoryId = query.categoryId;
 
         if(query.dateFrom || query.dateTo){
             where.date = {};
-            if(query.dateFrom) where.date.gte = new Date(String(query.dateFrom));
-            if(query.dateTo) where.date.lte = new Date(String(query.dateTo));
+            if(query.dateFrom) where.date.gte = query.dateFrom;
+            if(query.dateTo) where.date.lte = query.dateTo;
         }
 
         const [data, total] = await Promise.all([
@@ -37,12 +37,25 @@ class TransactionService{
 
     }
 
-    static async create(userId: number, payload: any){
-        const category = await prisma.category.findUnique({
-            where: { id: payload.categoryId }
+    // Ensures the category exists and is usable by this user
+    // (either a global default or one the user owns, and not soft-deleted).
+    private static async assertCategoryOwnership(userId: number, categoryId: number){
+        const category = await prisma.category.findFirst({
+            where: {
+                id: categoryId,
+                deletedAt: null,
+                OR: [
+                    { isDefault: true },
+                    { userId }
+                ]
+            }
         });
 
         if(!category) throw new HttpException(400, 'Invalid category!');
+    }
+
+    static async create(userId: number, payload: any){
+        await this.assertCategoryOwnership(userId, payload.categoryId);
 
         const transaction = await prisma.transaction.create({
             data: {
@@ -68,10 +81,22 @@ class TransactionService{
 
         if(!transaction || transaction.userId != userId) throw new HttpException(404, 'Transaction not found!');
 
-        return await prisma.transaction.update({
+        if(payload.categoryId !== undefined){
+            await this.assertCategoryOwnership(userId, payload.categoryId);
+        }
+
+        // Normalize date string into a real Date before persisting.
+        const data = { ...payload };
+        if(data.date !== undefined) data.date = new Date(data.date);
+
+        const updated = await prisma.transaction.update({
             where: { id },
-            data: payload
+            data
         });
+
+        await AIInsightSnapshotService.refreshForUser(userId);
+
+        return updated;
     }
 
     static async remove(userId: number, id: number){
@@ -82,6 +107,8 @@ class TransactionService{
         await prisma.transaction.delete({
             where: { id }
         });
+
+        await AIInsightSnapshotService.refreshForUser(userId);
     }
 
 }

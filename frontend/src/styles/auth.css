@@ -20,6 +20,12 @@
     color: #07b0b0ff;
 }
 
+.name-div{
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
 .email-div, .password-div {
     margin-bottom: 15px;
     display: flex;

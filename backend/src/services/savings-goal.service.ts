@@ -1,5 +1,5 @@
-import prisma from "../db/prisma";
-import AIInsightSnapshotService from "./ai/ai-insight-snapshot.service";
+import prisma from "../db/prisma.js";
+import AIInsightSnapshotService from "./ai/ai-insight-snapshot.service.js";
 
 class SavingsGoalService {
     static async getActiveGoal(userId: number) {
@@ -27,7 +27,7 @@ class SavingsGoalService {
         });
 
         if (existing) {
-            const updatedGoal = prisma.savingsGoal.update({
+            const updatedGoal = await prisma.savingsGoal.update({
                 where: { id: existing.id },
                 data: {
                     title: payload.title ?? existing.title,
@@ -41,7 +41,7 @@ class SavingsGoalService {
             return updatedGoal;
         }
 
-        const newGoal = prisma.savingsGoal.create({
+        const newGoal = await prisma.savingsGoal.create({
             data: {
                 userId,
                 title: payload.title ?? "Main savings goal",

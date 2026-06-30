@@ -35,6 +35,15 @@ export type TransactionCreatePayload = {
     date: string,
 }
 
+export type TransactionUpdatePayload = {
+    categoryId?: number;
+    amount?: number;
+    currency?: string;
+    note?: string;
+    merchant?: string;
+    date?: string;
+};
+
 export type TransactionCreateResponse = {
     data: {
         userId: number,

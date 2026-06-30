@@ -65,8 +65,8 @@ export default function AIChatPanel() {
     };
 
     return (
-        <section className="ai-chat-panel">
-            <div className="ai-chat-header">
+        <section className="ai-chat-panel animate-up">
+            <div className="ai-chat-header animate-up delay-1">
                 <div>
                     <h3>AI Finance Assistant</h3>
                     <p>Ask about your spending, categories, and monthly patterns.</p>
@@ -74,11 +74,12 @@ export default function AIChatPanel() {
             </div>
 
             <div className="ai-chat-starters">
-                {starterPrompts.map((item) => (
+                {starterPrompts.map((item, i) => (
                     <button
                         key={item}
                         type="button"
-                        className="ai-starter-btn"
+                        className="ai-starter-btn animate-up"
+                        style={{ animationDelay: `${0.2 + i * 0.07}s` }}
                         onClick={() => sendPrompt(item)}
                         disabled={loading}
                     >
@@ -93,8 +94,8 @@ export default function AIChatPanel() {
                         key={message.id}
                         className={
                             message.role === 'user'
-                                ? 'ai-message ai-message-user'
-                                : 'ai-message ai-message-assistant'
+                                ? 'ai-message ai-message-user animate-up'
+                                : 'ai-message ai-message-assistant animate-up'
                         }
                     >
                         <div className="ai-message-role">
@@ -105,7 +106,7 @@ export default function AIChatPanel() {
                 ))}
 
                 {loading && (
-                    <div className="ai-message ai-message-assistant">
+                    <div className="ai-message ai-message-assistant loading-pulse animate-up">
                         <div className="ai-message-role">AI</div>
                         <div className="ai-message-content">Analyzing your transactions...</div>
                     </div>

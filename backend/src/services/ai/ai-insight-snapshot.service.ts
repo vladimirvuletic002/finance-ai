@@ -1,5 +1,5 @@
-import prisma from "../../db/prisma";
-import AIInsightsService from "./ai-insights.service";
+import prisma from "../../db/prisma.js";
+import AIInsightsService from "./ai-insights.service.js";
 
 class AIInsightSnapshotService {
     static async refreshForUser(userId: number) {

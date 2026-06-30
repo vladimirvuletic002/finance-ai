@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import authRoutes from './modules/auth.routes';
-import transactionRoutes from './modules/transaction.routes';
-import categoryRoutes from './modules/category.routes';
-import aiRoutes from './modules/ai.routes';
-import savingsGoalRoutes from './modules/savings-goal.routes';
+import authRoutes from './modules/auth.routes.js';
+import transactionRoutes from './modules/transaction.routes.js';
+import categoryRoutes from './modules/category.routes.js';
+import aiRoutes from './modules/ai.routes.js';
+import savingsGoalRoutes from './modules/savings-goal.routes.js';
 
 const router = Router();
 

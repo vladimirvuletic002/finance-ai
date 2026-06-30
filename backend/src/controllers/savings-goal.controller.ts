@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import SavingsGoalService from "../services/savings-goal.service";
+import SavingsGoalService from "../services/savings-goal.service.js";
 
 class SavingsGoalController{
     static async getActive(req:Request, res:Response, next:NextFunction){

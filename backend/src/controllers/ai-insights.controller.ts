@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import AIInsightsService from "../services/ai/ai-insights.service";
+import AIInsightsService from "../services/ai/ai-insights.service.js";
 
 class AIInsightsController {
     static async getInsights(req: Request, res: Response, next: NextFunction) {

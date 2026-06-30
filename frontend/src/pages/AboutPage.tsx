@@ -3,7 +3,7 @@ import '../App.css';
 const AboutPage = () => {
     return(
         <div className='app-container'>
-            <div className="about-container">
+            <div className="about-container animate-up">
             <h2>
                 About Page
             </h2>

@@ -1,6 +1,6 @@
-import prisma from "../../db/prisma";
-import SavingsGoalService from "../savings-goal.service";
-import AIRecommendationService from "./ai-recommendation.service";
+import prisma from "../../db/prisma.js";
+import SavingsGoalService from "../savings-goal.service.js";
+import AIRecommendationService from "./ai-recommendation.service.js";
 
 type RecurringCandidate = {
   key: string;

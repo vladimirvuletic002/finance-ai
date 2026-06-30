@@ -1,8 +1,8 @@
 import { Router } from "express";
-import authMiddleware from "../../middlewares/auth.middleware";
-import { validateBody } from "../../middlewares/validate.middleware";
-import SavingsGoalController from "../../controllers/savings-goal.controller"
-import { upsertSavingsGoalSchema } from "../../schemas/savings-goal.schema";
+import authMiddleware from "../../middlewares/auth.middleware.js";
+import { validateBody } from "../../middlewares/validate.middleware.js";
+import SavingsGoalController from "../../controllers/savings-goal.controller.js"
+import { upsertSavingsGoalSchema } from "../../schemas/savings-goal.schema.js";
 
 const router = Router();
 

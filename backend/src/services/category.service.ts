@@ -1,5 +1,5 @@
-import prisma from "../db/prisma";
-import { HttpException } from "../utils/http-exception";
+import prisma from "../db/prisma.js";
+import { HttpException } from "../utils/http-exception.js";
 
 class CategoryService {
 

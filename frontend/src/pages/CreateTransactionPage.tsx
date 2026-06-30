@@ -1,7 +1,7 @@
 import '../styles/CreateTransaction.css';
+import '../styles/validation.css';
 import CurrencyInput from 'react-currency-input-field';
 import { useEffect, useState } from 'react';
-import { useNavigate } from "react-router-dom";
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { transactionCreateApi } from '../services/TransactionService';
@@ -12,7 +12,10 @@ import { type ListObj } from '../models/Category';
 import { toast } from 'react-toastify';
 
 const validationSchema: Yup.ObjectSchema<TransactionCreatePayload> = Yup.object({
-    categoryId: Yup.number().required('Transaction category is required'),
+    categoryId: Yup.number()
+        .transform((value, original) => (original === '' || Number.isNaN(value) ? undefined : value))
+        .typeError('Transaction category is required')
+        .required('Transaction category is required'),
     type: Yup.string().required('Transaction type is required'),
     amount: Yup.number()
         .typeError('Amount must be a number')
@@ -30,8 +33,6 @@ export default function CreateTransactionPage() {
 
     // RAW vrednost bez zareza, npr. "1000.5"
     const [amountInput, setAmountInput] = useState("");
-
-    const navigate = useNavigate();
 
     const {
         register,
@@ -136,7 +137,7 @@ export default function CreateTransactionPage() {
 
     return (
         <div className="transaction-page-container">
-            <div className="create-transaction-container">
+            <div className="create-transaction-container animate-up">
                 <h2>Input new transaction</h2>
 
                 <form
@@ -156,7 +157,7 @@ export default function CreateTransactionPage() {
                             ))}
                         </select>
 
-                        {errors.categoryId && <p>{errors.categoryId.message}</p>}
+                        {errors.categoryId && <p className="field-error">{errors.categoryId.message}</p>}
                     </div>
 
                     <div className="type-field">
@@ -167,7 +168,7 @@ export default function CreateTransactionPage() {
                             <option value="EXPENSE">EXPENSE</option>
                         </select>
 
-                        {errors.type && <p>{errors.type.message}</p>}
+                        {errors.type && <p className="field-error">{errors.type.message}</p>}
                     </div>
 
                     <div className="amount-field">
@@ -189,7 +190,7 @@ export default function CreateTransactionPage() {
                             onBlur={handleAmountBlur}
                         />
 
-                        {errors.amount && <p>{errors.amount.message}</p>}
+                        {errors.amount && <p className="field-error">{errors.amount.message}</p>}
                     </div>
 
                     <div className="currency-field">
@@ -201,7 +202,7 @@ export default function CreateTransactionPage() {
                             <option value="RSD">RSD</option>
                         </select>
 
-                        {errors.currency && <p>{errors.currency.message}</p>}
+                        {errors.currency && <p className="field-error">{errors.currency.message}</p>}
                     </div>
 
                     <div className="merchant-field">
@@ -213,7 +214,7 @@ export default function CreateTransactionPage() {
                             {...register("merchant")}
                         />
 
-                        {errors.merchant && <p>{errors.merchant.message}</p>}
+                        {errors.merchant && <p className="field-error">{errors.merchant.message}</p>}
                     </div>
 
                     <div className="note-field">
@@ -234,7 +235,7 @@ export default function CreateTransactionPage() {
                             {...register("date")}
                         />
 
-                        {errors.date && <p>{errors.date.message}</p>}
+                        {errors.date && <p className="field-error">{errors.date.message}</p>}
                     </div>
 
                     <button

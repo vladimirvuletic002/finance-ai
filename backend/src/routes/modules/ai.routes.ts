@@ -1,16 +1,24 @@
 import { Router } from 'express';
-import authMiddleware from '../../middlewares/auth.middleware';
-import { validateBody } from '../../middlewares/validate.middleware';
-import { createRequest } from '../../schemas/ai.schemas';
-import AiController from '../../controllers/ai.controller';
-import AIInsightsController from '../../controllers/ai-insights.controller';
-import AIInsightSnapshotController from '../../controllers/ai-insight-snapshot.controller';
+import authMiddleware from '../../middlewares/auth.middleware.js';
+import { validateBody } from '../../middlewares/validate.middleware.js';
+import { rateLimit } from '../../middlewares/rate-limit.middleware.js';
+import { createRequest } from '../../schemas/ai.schemas.js';
+import AiController from '../../controllers/ai.controller.js';
+import AIInsightsController from '../../controllers/ai-insights.controller.js';
+import AIInsightSnapshotController from '../../controllers/ai-insight-snapshot.controller.js';
 
 const router = Router();
 
 router.use(authMiddleware);
 
-router.post('/chat', validateBody(createRequest), AiController.respond);
+// AI chat calls Gemini and is expensive — keep it tightly limited.
+const aiChatLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minute
+    max: 10,
+    message: 'AI request limit reached. Please wait a moment before trying again.',
+});
+
+router.post('/chat', aiChatLimiter, validateBody(createRequest), AiController.respond);
 router.get('/insights', AIInsightsController.getInsights);
 router.get('/insights/latest', AIInsightSnapshotController.getLatest);
 

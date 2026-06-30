@@ -1,4 +1,4 @@
-import prisma from '../../db/prisma';
+import prisma from '../../db/prisma.js';
 
 class AIContextService {
     static async getRecentFinancialContext(userId: number, monthsBack = 3) {

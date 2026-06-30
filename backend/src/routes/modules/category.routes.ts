@@ -1,9 +1,9 @@
 import { Router } from 'express';
 
-import authMiddleware from '../../middlewares/auth.middleware';
+import authMiddleware from '../../middlewares/auth.middleware.js';
 //import { validateBody } from '../../middlewares/validate.middleware';
 //import { createTransactionSchema } from '../../schemas/transaction.schema';
-import CategoryController from '../../controllers/category.controller';
+import CategoryController from '../../controllers/category.controller.js';
 
 const router = Router();
 

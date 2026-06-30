@@ -1,0 +1,55 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { rateLimit } from './rate-limit.middleware.js';
+
+function makeRes() {
+    return {
+        statusCode: 0,
+        body: undefined as unknown,
+        headers: {} as Record<string, string>,
+        setHeader(key: string, value: string) { this.headers[key] = value; },
+        status(code: number) { this.statusCode = code; return this; },
+        json(payload: unknown) { this.body = payload; return this; },
+    };
+}
+
+test('allows requests up to the configured max', () => {
+    const mw = rateLimit({ windowMs: 1000, max: 3 });
+    const req = { ip: '1.1.1.1' };
+    let nextCalls = 0;
+    const next = () => { nextCalls++; };
+
+    for (let i = 0; i < 3; i++) {
+        mw(req as never, makeRes() as never, next as never);
+    }
+
+    assert.equal(nextCalls, 3);
+});
+
+test('responds 429 once the max is exceeded', () => {
+    const mw = rateLimit({ windowMs: 1000, max: 2 });
+    const req = { ip: '2.2.2.2' };
+    let nextCalls = 0;
+    const next = () => { nextCalls++; };
+
+    mw(req as never, makeRes() as never, next as never);
+    mw(req as never, makeRes() as never, next as never);
+
+    const res = makeRes();
+    mw(req as never, res as never, next as never);
+
+    assert.equal(nextCalls, 2);
+    assert.equal(res.statusCode, 429);
+    assert.ok(res.headers['Retry-After'] !== undefined);
+});
+
+test('tracks each client IP independently', () => {
+    const mw = rateLimit({ windowMs: 1000, max: 1 });
+    let nextCalls = 0;
+    const next = () => { nextCalls++; };
+
+    mw({ ip: 'a' } as never, makeRes() as never, next as never);
+    mw({ ip: 'b' } as never, makeRes() as never, next as never);
+
+    assert.equal(nextCalls, 2);
+});

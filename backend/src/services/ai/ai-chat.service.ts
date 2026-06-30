@@ -1,82 +1,31 @@
 import { GoogleGenAI, ThinkingLevel } from '@google/genai';
-import { HttpException } from '../../utils/http-exception';
-import AIContextService from './ai-context.service';
-import AIPromptBuilderService from './ai-prompt-builder.service';
-
-const MONTH_PATTERNS: Array<[RegExp, number]> = [
-    [/\bjanuary\b|\bjanuar\b/, 1],
-    [/\bfebruary\b|\bfebruar\b/, 2],
-    [/\bmarch\b|\bmart\b/, 3],
-    [/\bapril\b/, 4],
-    [/\bmay\b|\bmaj\b/, 5],
-    [/\bjune\b|\bjun\b/, 6],
-    [/\bjuly\b|\bjul\b/, 7],
-    [/\baugust\b|\bavgust\b/, 8],
-    [/\bseptember\b|\bseptembar\b/, 9],
-    [/\boctober\b|\boktobar\b/, 10],
-    [/\bnovember\b|\bnovembar\b/, 11],
-    [/\bdecember\b|\bdecembar\b/, 12],
-];
-
-function normalizePrompt(text: string) {
-    return text
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '');
-}
-
-function resolveRequestedMonth(prompt: string) {
-    const normalized = normalizePrompt(prompt);
-    const now = new Date();
-
-    if (normalized.includes('last month') || normalized.includes('proslog meseca') || normalized.includes('prosli mesec')) {
-        const currentMonth = now.getMonth() + 1;
-        if (currentMonth === 1) {
-            return { month: 12, year: now.getFullYear() - 1 };
-        }
-
-        return { month: currentMonth - 1, year: now.getFullYear() };
-    }
-
-    if (normalized.includes('this month') || normalized.includes('ovog meseca') || normalized.includes('ovaj mesec')) {
-        return { month: now.getMonth() + 1, year: now.getFullYear() };
-    }
-
-    for (const [pattern, month] of MONTH_PATTERNS) {
-        if (pattern.test(normalized)) {
-            const yearMatch = normalized.match(/\b(20\d{2})\b/);
-            return {
-                month,
-                year: yearMatch ? Number(yearMatch[1]) : now.getFullYear()
-            };
-        }
-    }
-
-    return null;
-}
-
-function buildMonthKey(month: number, year: number) {
-    return `${year}-${String(month).padStart(2, '0')}`;
-}
+import { HttpException } from '../../utils/http-exception.js';
+import AIContextService from './ai-context.service.js';
+import AIPromptBuilderService from './ai-prompt-builder.service.js';
+import { withGeminiRetry } from './ai-retry.js';
+import { resolveRequestedMonth, buildMonthKey } from './month-parser.js';
+import config from '../../config/env.js';
 
 class AIChatService {
     private static getClient() {
         return new GoogleGenAI({
-            apiKey: process.env.GEMINI_API_KEY
+            apiKey: config.GEMINI_API_KEY
         });
     }
 
     private static async generateText(prompt: string) {
         const ai = this.getClient();
 
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash-lite',
-            contents: prompt,
-            config: {
-                maxOutputTokens: 180,
-                temperature: 0.3
-            }
-        });
+        const response = await withGeminiRetry(() =>
+            ai.models.generateContent({
+                model: 'gemini-2.5-flash-lite',
+                contents: prompt,
+                config: {
+                    maxOutputTokens: 180,
+                    temperature: 0.3
+                }
+            })
+        );
 
         return response.text ?? '';
     }

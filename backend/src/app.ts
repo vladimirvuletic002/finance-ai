@@ -2,9 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import apiRouter from './routes';
-import { errorMiddleware } from './middlewares/error.middleware';
-import logger from './config/logger';
+import apiRouter from './routes/index.js';
+import { errorMiddleware } from './middlewares/error.middleware.js';
+import logger from './config/logger.js';
 
 const app = express();
 app.use(helmet());

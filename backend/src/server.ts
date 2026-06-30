@@ -1,7 +1,5 @@
-import 'dotenv/config';
-import app from './app';
-import logger from './config/logger';
+import app from './app.js';
+import logger from './config/logger.js';
+import config from './config/env.js';
 
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => logger.info(`Server is listening on http://localhost:${PORT}`));
+app.listen(config.PORT, () => logger.info(`Server is listening on http://localhost:${config.PORT}`));

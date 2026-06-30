@@ -8,7 +8,7 @@ export default function HomePage() {
   
   return (
       <div className="app-container">
-      <div className="greeting-container">
+      <div className="greeting-container animate-up">
         
         {!user ? (
           <p>Hello and Welcome to the AI Finance Assistant app!</p>

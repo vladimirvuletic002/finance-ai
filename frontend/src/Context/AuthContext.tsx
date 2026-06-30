@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }: Props) => {
                 toast.success("Login Successful!");
                 navigate("/");
             }
-        }).catch((err) => toast.warning("Server error occured"));
+        }).catch(() => toast.warning("Server error occured"));
     }
 
     const loginUser = async(payload: LoginPayload) => {
@@ -97,7 +97,7 @@ export const AuthProvider = ({ children }: Props) => {
                 toast.success("Login Successful!");
                 navigate("/");
             }
-        }).catch((err) => toast.warning("Serve error occured"));
+        }).catch(() => toast.warning("Serve error occured"));
     }
 
     const isLoggedIn = () => {

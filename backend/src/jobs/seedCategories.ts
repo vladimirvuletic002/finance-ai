@@ -1,4 +1,4 @@
-import prisma from "../db/prisma";
+import prisma from "../db/prisma.js";
 
 const defaultCategories = [
   { name: "Food", icon: "🍔", color: "#FF7043" },

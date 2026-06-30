@@ -1,16 +1,16 @@
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FaBars } from "react-icons/fa";
+import SignOutIcon from "../assets/sign-out.svg?react";
 
 
 const NavbarX = () => {
     const navigate = useNavigate();
-    const {isLoggedIn, user, logoutUser} = useAuth();
+    const {user, logoutUser} = useAuth();
     const [menuOpen, setMenuOpen] = useState(false);
 
     const username = user?.name ||  user?.email || "User";
-    const initials = (username?.[0] || "U").toUpperCase();
 
     const toggleMenu = () => setMenuOpen(!menuOpen);
 
@@ -35,9 +35,9 @@ const NavbarX = () => {
                 </button>
             ) : (
                 <>
-                <div id="userLabel"className="navUsername">{username}</div>
-                <button id="LogoutBtn" className="navLogoutBtn" onClick={() => logoutUser()}>
-                    LOG OUT
+                <div id="userLabel" className="navUsername" onClick={() => navigate('/dashboard')}>{username}</div>
+                <button id="LogoutBtn" className="navLogoutBtn" onClick={() => logoutUser()} title="Log out">
+                    <SignOutIcon width="18" height="18" />
                 </button>
                 </>
             )}
@@ -52,9 +52,14 @@ const NavbarX = () => {
                 {menuOpen && (
                     <div className="dropdownMenu">
                     { user ? (
-                        <button className="dropdowmLogout" onClick={()=> {logoutUser(); toggleMenu();}}>
-                            LOG OUT
+                        <>
+                        <div className="navUsername" onClick={() => navigate('/dashboard')}>{username}</div>
+                        <button className="dropdownLogout" onClick={() => navigate('/dashboard')}> Dashboard </button>
+                        <button className="dropdowmLogout" onClick={()=> {logoutUser(); toggleMenu();}} title="Log out">
+                            <SignOutIcon width="18" height="18" style={{ display: 'inline', verticalAlign: 'middle', marginRight: '6px' }} />
+                            
                         </button>
+                        </>
                     ) : (
                         <button className="dropdowmLogin" onClick={() => {navigate('/login'); toggleMenu();}}>
                             SIGN IN

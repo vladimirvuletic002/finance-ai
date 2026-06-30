@@ -1,12 +1,14 @@
 import { Request,Response,NextFunction } from "express";
-import TransactionService from "../services/transaction.service";
+import TransactionService from "../services/transaction.service.js";
+import type { ListTransactionsQuery } from "../schemas/transaction.schema.js";
 
 class TransactionController{
     static async list(req:Request, res:Response, next: NextFunction){
         try{
             const userId = (req as any).user.id;
-            const query = req.query;
-            const data = await TransactionService.list(userId,query as any);
+            // Query is validated/coerced by validateQuery middleware.
+            const query = req.query as unknown as ListTransactionsQuery;
+            const data = await TransactionService.list(userId,query);
 
             res.status(200).json(data);
         }

@@ -1,5 +1,5 @@
 import { Request,Response,NextFunction } from "express";
-import AIChatService from '../services/ai/ai-chat.service';
+import AIChatService from '../services/ai/ai-chat.service.js';
 
 class AiController{
 

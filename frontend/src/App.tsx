@@ -7,7 +7,7 @@ import RegisterPage from './pages/RegisterPage';
 import HomePage from './pages/HomePage'
 import { AuthProvider } from './Context/AuthContext';
 import NavbarX from './components/NavbarX';
-import Sidebar from './components/Sidebar';
+import ProtectedRoute from './components/ProtectedRoute';
 import AboutPage from './pages/AboutPage';
 import DashboardPage from './pages/DashboardPage';
 import CreateTransactionPage from './pages/CreateTransactionPage';
@@ -21,8 +21,6 @@ function App() {
         <div className="app-layout">
         <NavbarX />
 
-        <Sidebar />
-
         <main>
         <ToastContainer />
 
@@ -31,8 +29,8 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/about" element={<AboutPage />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path='/add-transaction' element={<CreateTransactionPage />} />
+            <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+            <Route path='/add-transaction' element={<ProtectedRoute><CreateTransactionPage /></ProtectedRoute>} />
           </Routes>
         </main>
         </div>

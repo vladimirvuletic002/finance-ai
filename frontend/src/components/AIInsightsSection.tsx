@@ -77,7 +77,7 @@ export default function AIInsightsSection() {
     };
 
     if (loading) {
-        return <div className="ai-insights-wrapper">Loading AI insights...</div>;
+        return <div className="ai-insights-wrapper loading-pulse">Loading AI insights...</div>;
     }
 
     if (err) {
@@ -101,13 +101,13 @@ export default function AIInsightsSection() {
 
     return (
         <section className="ai-insights-wrapper">
-            <div className="ai-insights-header">
+            <div className="ai-insights-header animate-up">
                 <h2>AI Insights</h2>
                 <p>Smart financial summaries and predictions based on your latest transactions.</p>
             </div>
 
             <div className="ai-insights-grid">
-                <div className="ai-card">
+                <div className="ai-card animate-up delay-1">
                     <div className="ai-card-label">Spending Change</div>
                     <div className="ai-card-value">{spendingText}</div>
                     <div className="ai-card-subtext">
@@ -118,7 +118,7 @@ export default function AIInsightsSection() {
                     </div>
                 </div>
 
-                <div className="ai-card">
+                <div className="ai-card animate-up delay-2">
                     <div className="ai-card-label">Recurring Forecast</div>
                     <div className="ai-card-value">
                         Expected recurring expenses next month:{" "}
@@ -136,7 +136,7 @@ export default function AIInsightsSection() {
                     </div>
                 </div>
 
-                <div className="ai-card">
+                <div className="ai-card animate-up delay-3">
                     <div className="ai-card-label">Top Spending Category</div>
                     <div className="ai-card-value">
                         Top spending category this month: {data.topCategoryName ?? "N/A"}
@@ -147,7 +147,7 @@ export default function AIInsightsSection() {
                 </div>
             </div>
 
-            <div className="saving-goal-card">
+            <div className="saving-goal-card animate-up delay-4">
                 <div className="saving-goal-header">
                     <div>
                         <h3>Saving Goal</h3>

@@ -1,8 +1,9 @@
 import jwt, { Secret, SignOptions }from 'jsonwebtoken';
+import config from '../config/env.js';
 
 export const signToken = (payload: object, subject: string) => {
-    const secret: Secret = process.env.JWT_SECRET_KEY || 'dev_secret';
-    const expires = (process.env.JWT_EXPIRES_IN || '1h') as SignOptions['expiresIn'];
+    const secret: Secret = config.JWT_SECRET_KEY;
+    const expires = config.JWT_EXPIRES_IN as SignOptions['expiresIn'];
 
     const options: SignOptions = { subject, expiresIn: expires };
 
