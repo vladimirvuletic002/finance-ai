@@ -25,28 +25,30 @@ function makeRes() {
 
 test('rejects a request with no Authorization header', () => {
     const res = makeRes();
-    let nextCalled = false;
+    let error: any;
 
-    authMiddleware({ headers: {} } as never, res as never, (() => { nextCalled = true; }) as never);
+    authMiddleware({ headers: {} } as never, res as never, ((err: any) => { error = err; }) as never);
 
-    assert.equal(res.statusCode, 401);
-    assert.equal(nextCalled, false);
+    assert.equal(res.statusCode, 0);
+    assert.equal(error?.status, 401);
 });
 
 test('rejects a malformed Authorization header', () => {
     const res = makeRes();
+    let error: any;
 
-    authMiddleware({ headers: { authorization: 'Bearer' } } as never, res as never, (() => {}) as never);
+    authMiddleware({ headers: { authorization: 'Bearer' } } as never, res as never, ((err: any) => { error = err; }) as never);
 
-    assert.equal(res.statusCode, 401);
+    assert.equal(error?.status, 401);
 });
 
 test('rejects an invalid token', () => {
     const res = makeRes();
+    let error: any;
 
-    authMiddleware({ headers: { authorization: 'Bearer not.a.jwt' } } as never, res as never, (() => {}) as never);
+    authMiddleware({ headers: { authorization: 'Bearer not.a.jwt' } } as never, res as never, ((err: any) => { error = err; }) as never);
 
-    assert.equal(res.statusCode, 401);
+    assert.equal(error?.status, 401);
 });
 
 test('accepts a valid token and populates req.user', () => {

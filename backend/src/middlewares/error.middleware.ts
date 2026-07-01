@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { HttpException } from '../utils/http-exception.js';
 import config from '../config/env.js';
+import logger from '../config/logger.js';
+import { RequestWithId } from './request-id.middleware.js';
 
 /**
  * Standardized error response shape sent to every client:
@@ -59,10 +61,15 @@ export function formatErrorResponse(
 }
 
 export const errorMiddleware = (err: any, req: Request, res: Response, next: NextFunction) => {
-    // Server-side logging is intentionally left as-is (out of scope here).
-    console.error(err);
-
     const { status, body } = formatErrorResponse(err, config.NODE_ENV === 'production');
+    const requestId = (req as RequestWithId).id;
+
+    logger.error(err instanceof Error ? err.message : 'Unknown error', {
+        requestId,
+        code: body.error.code,
+        status,
+        stack: err instanceof Error ? err.stack : undefined,
+    });
 
     return res.status(status).json(body);
 };

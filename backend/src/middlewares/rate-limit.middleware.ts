@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { HttpException } from '../utils/http-exception.js';
 
 interface RateLimitOptions {
     windowMs: number;   // time window in milliseconds
@@ -41,7 +42,7 @@ export function rateLimit(options: RateLimitOptions) {
         if (bucket.count > max) {
             const retryAfterSec = Math.ceil((bucket.resetAt - now) / 1000);
             res.setHeader('Retry-After', String(retryAfterSec));
-            return res.status(429).json({ error: message });
+            return next(new HttpException(429, message, 'TOO_MANY_REQUESTS'));
         }
 
         return next();

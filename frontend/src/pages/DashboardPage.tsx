@@ -74,7 +74,7 @@ export default function DashboardPage() {
             }
             catch(e: any){
                 if (!active) return;
-                const msg = e?.response?.data?.message || e?.message || "Failed to load transactions.";
+                const msg = e?.response?.data?.error?.message || e?.message || "Failed to load transactions.";
                 setErr(msg);
             }
             finally{

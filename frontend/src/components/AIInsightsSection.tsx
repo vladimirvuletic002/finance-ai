@@ -43,7 +43,7 @@ export default function AIInsightsSection() {
                 setGoalAmountInput(String(goalAmount) || "0");
             } catch (e: any) {
                 if (!active) return;
-                const msg = e?.response?.data?.message || e?.message || "Failed to load AI insights.";
+                const msg = e?.response?.data?.error?.message || e?.message || "Failed to load AI insights.";
                 setErr(msg);
             } finally {
                 if (active) setLoading(false);

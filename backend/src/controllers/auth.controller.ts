@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import AuthService from "../services/auth.service.js";
+import { HttpException } from "../utils/http-exception.js";
 
 class AuthController {
   static async register(req: Request, res: Response, next: NextFunction) {
@@ -31,11 +32,15 @@ class AuthController {
     }
   }
 
-  static async me(req: any, res: Response) {
-    // If you attach auth middleware here, req.user will exist
-    if (!req.user) return res.status(401).json({ error: "Unauthorized" });
-    const user = await AuthService.me(req.user.id);
-    res.json(user);
+  static async me(req: any, res: Response, next: NextFunction) {
+    try {
+      // authMiddleware runs before this controller, so req.user is populated.
+      if (!req.user) return next(new HttpException(401, "Unauthorized", "UNAUTHORIZED"));
+      const user = await AuthService.me(req.user.id);
+      res.json(user);
+    } catch (err) {
+      next(err);
+    }
   }
 }
 

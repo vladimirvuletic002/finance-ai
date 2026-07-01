@@ -26,7 +26,7 @@ test('allows requests up to the configured max', () => {
     assert.equal(nextCalls, 3);
 });
 
-test('responds 429 once the max is exceeded', () => {
+test('passes a 429 HttpException to next once the max is exceeded', () => {
     const mw = rateLimit({ windowMs: 1000, max: 2 });
     const req = { ip: '2.2.2.2' };
     let nextCalls = 0;
@@ -36,10 +36,12 @@ test('responds 429 once the max is exceeded', () => {
     mw(req as never, makeRes() as never, next as never);
 
     const res = makeRes();
-    mw(req as never, res as never, next as never);
+    let error: any;
+    mw(req as never, res as never, ((err: any) => { error = err; }) as never);
 
     assert.equal(nextCalls, 2);
-    assert.equal(res.statusCode, 429);
+    assert.equal(res.statusCode, 0);
+    assert.equal(error?.status, 429);
     assert.ok(res.headers['Retry-After'] !== undefined);
 });
 

@@ -51,7 +51,7 @@ export default function AIChatPanel() {
             setMessages(prev => [...prev, assistantMessage]);
         } catch (error: any) {
             const fallback =
-                error?.response?.data?.message ||
+                error?.response?.data?.error?.message ||
                 error?.message ||
                 'Something went wrong while contacting the AI service.';
 
