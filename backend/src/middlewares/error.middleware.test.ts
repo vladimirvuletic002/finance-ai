@@ -11,6 +11,7 @@ process.env.GEMINI_API_KEY ??= 'test-gemini-api-key';
 
 const { errorMiddleware, formatErrorResponse } = await import('./error.middleware.js');
 const { HttpException } = await import('../utils/http-exception.js');
+const { Prisma } = await import('@prisma/client');
 
 function makeRes() {
     return {
@@ -74,5 +75,37 @@ test('formatErrorResponse always preserves an HttpException message, even in pro
 
     assert.deepEqual(result.body, {
         error: { message: 'Invalid category!', code: 'BAD_REQUEST' },
+    });
+});
+
+test('formatErrorResponse sanitizes a Prisma connectivity error, hiding local file paths, even outside production', () => {
+    const err = new Prisma.PrismaClientInitializationError(
+        "Can't reach database server at `localhost:5432`\n/Users/someone/project/backend/src/services/auth.service.ts:34:40",
+        '6.19.0'
+    );
+
+    const result = formatErrorResponse(err, false);
+
+    assert.equal(result.status, 503);
+    assert.deepEqual(result.body, {
+        error: {
+            message: 'The database is currently unavailable. Please try again later.',
+            code: 'DATABASE_UNAVAILABLE',
+        },
+    });
+    assert.ok(!JSON.stringify(result.body).includes('/Users/'));
+});
+
+test('formatErrorResponse sanitizes a Prisma known-request error, even outside production', () => {
+    const err = new Prisma.PrismaClientKnownRequestError('Unique constraint failed on the fields: (`email`)', {
+        code: 'P2002',
+        clientVersion: '6.19.0',
+    });
+
+    const result = formatErrorResponse(err, false);
+
+    assert.equal(result.status, 500);
+    assert.deepEqual(result.body, {
+        error: { message: 'A database error occurred.', code: 'DATABASE_ERROR' },
     });
 });

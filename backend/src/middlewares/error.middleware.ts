@@ -1,8 +1,53 @@
 import { Request, Response, NextFunction } from 'express';
+import { Prisma } from '@prisma/client';
 import { HttpException } from '../utils/http-exception.js';
 import config from '../config/env.js';
 import logger from '../config/logger.js';
 import { RequestWithId } from './request-id.middleware.js';
+
+/**
+ * Prisma error messages embed a source code frame (including absolute local
+ * file paths) and low-level connection/query details. That's useful in a
+ * terminal but must never reach an HTTP client, in any environment — so
+ * these are mapped to a safe, generic message/status before the
+ * dev-vs-production branch below ever sees them.
+ */
+function isPrismaError(err: unknown): boolean {
+    return (
+        err instanceof Prisma.PrismaClientInitializationError ||
+        err instanceof Prisma.PrismaClientRustPanicError ||
+        err instanceof Prisma.PrismaClientKnownRequestError ||
+        err instanceof Prisma.PrismaClientUnknownRequestError ||
+        err instanceof Prisma.PrismaClientValidationError
+    );
+}
+
+function formatPrismaError(err: unknown): { status: number; body: ErrorResponseBody } {
+    const isConnectivityError =
+        err instanceof Prisma.PrismaClientInitializationError || err instanceof Prisma.PrismaClientRustPanicError;
+
+    if (isConnectivityError) {
+        return {
+            status: 503,
+            body: {
+                error: {
+                    message: 'The database is currently unavailable. Please try again later.',
+                    code: 'DATABASE_UNAVAILABLE',
+                },
+            },
+        };
+    }
+
+    return {
+        status: 500,
+        body: {
+            error: {
+                message: 'A database error occurred.',
+                code: 'DATABASE_ERROR',
+            },
+        },
+    };
+}
 
 /**
  * Standardized error response shape sent to every client:
@@ -12,10 +57,14 @@ import { RequestWithId } from './request-id.middleware.js';
  * - Operational errors (HttpException) always preserve their intended
  *   status/message/code — they were thrown deliberately by a service to
  *   communicate something safe to show the caller.
- * - Unexpected/programmer errors never leak their raw message or stack to
- *   the client in production; a generic message is returned instead. In
- *   non-production environments the real message is included to help
- *   debugging.
+ * - Prisma errors are always sanitized to a generic message/status, in every
+ *   environment — their raw `.message` embeds a source code frame (with
+ *   absolute local file paths) and low-level connection/query details that
+ *   must never reach a client.
+ * - Other unexpected/programmer errors never leak their raw message or
+ *   stack to the client in production; a generic message is returned
+ *   instead. In non-production environments the real message is included
+ *   to help debugging.
  */
 export interface ErrorResponseBody {
     error: {
@@ -44,6 +93,10 @@ export function formatErrorResponse(
                 },
             },
         };
+    }
+
+    if (isPrismaError(err)) {
+        return formatPrismaError(err);
     }
 
     const rawMessage = err instanceof Error ? err.message : undefined;
