@@ -47,13 +47,21 @@ class AIInsightSnapshotService {
         });
     }
 
-    static async getLatestForUser(userId: number) {
-        return prisma.aIInsight.findFirst({
-            where: { userId },
-            orderBy: {
-                updatedAt: "desc"
-            }
+    // Serves the cached snapshot for the current calendar month, generating
+    // one on demand (deterministic analytics + a single Gemini call) the
+    // first time it's requested that month. Repeat requests are a plain DB
+    // read — no recomputation, no Gemini call — until the next transaction
+    // mutation invalidates it via refreshForUser().
+    static async getCurrentForUser(userId: number) {
+        const now = new Date();
+        const month = now.getMonth() + 1;
+        const year = now.getFullYear();
+
+        const existing = await prisma.aIInsight.findUnique({
+            where: { userId_year_month: { userId, year, month } }
         });
+
+        return existing ?? this.refreshForUser(userId);
     }
 }
 

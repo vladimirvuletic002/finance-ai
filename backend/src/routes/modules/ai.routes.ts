@@ -4,7 +4,6 @@ import { validateBody } from '../../middlewares/validate.middleware.js';
 import { rateLimit } from '../../middlewares/rate-limit.middleware.js';
 import { createRequest } from '../../schemas/ai.schemas.js';
 import AiController from '../../controllers/ai.controller.js';
-import AIInsightsController from '../../controllers/ai-insights.controller.js';
 import AIInsightSnapshotController from '../../controllers/ai-insight-snapshot.controller.js';
 
 const router = Router();
@@ -19,7 +18,6 @@ const aiChatLimiter = rateLimit({
 });
 
 router.post('/chat', aiChatLimiter, validateBody(createRequest), AiController.respond);
-router.get('/insights', AIInsightsController.getInsights);
 router.get('/insights/latest', AIInsightSnapshotController.getLatest);
 
 export default router;
