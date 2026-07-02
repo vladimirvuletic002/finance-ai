@@ -36,7 +36,7 @@ class SavingsGoalService {
                 }
             });
 
-            await AIInsightSnapshotService.refreshForUser(userId);
+            AIInsightSnapshotService.scheduleRefreshForUser(userId);
 
             return updatedGoal;
         }
@@ -51,7 +51,7 @@ class SavingsGoalService {
             }
         });
 
-        await AIInsightSnapshotService.refreshForUser(userId);
+        AIInsightSnapshotService.scheduleRefreshForUser(userId);
 
         return newGoal;
     }

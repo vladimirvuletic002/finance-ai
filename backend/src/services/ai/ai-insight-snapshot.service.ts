@@ -1,7 +1,21 @@
 import prisma from "../../db/prisma.js";
+import logger from "../../config/logger.js";
 import AIInsightsService from "./ai-insights.service.js";
 
 class AIInsightSnapshotService {
+    // Fire-and-forget wrapper around refreshForUser() for callers that must
+    // not block their HTTP response on a Gemini call (transaction/savings-goal
+    // mutations). Errors are logged, never thrown back to the caller — the
+    // snapshot simply stays stale until the next successful refresh.
+    static scheduleRefreshForUser(userId: number): void {
+        this.refreshForUser(userId).catch((err) => {
+            logger.error('Failed to refresh AI insight snapshot', {
+                userId,
+                error: err instanceof Error ? err.message : String(err),
+            });
+        });
+    }
+
     static async refreshForUser(userId: number) {
         const result = await AIInsightsService.getInsights(userId);
 

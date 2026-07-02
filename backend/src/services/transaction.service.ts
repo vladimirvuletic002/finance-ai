@@ -70,7 +70,7 @@ class TransactionService{
             }
         });
 
-        await AIInsightSnapshotService.refreshForUser(userId);
+        AIInsightSnapshotService.scheduleRefreshForUser(userId);
 
         return transaction;
 
@@ -94,7 +94,7 @@ class TransactionService{
             data
         });
 
-        await AIInsightSnapshotService.refreshForUser(userId);
+        AIInsightSnapshotService.scheduleRefreshForUser(userId);
 
         return updated;
     }
@@ -108,7 +108,7 @@ class TransactionService{
             where: { id }
         });
 
-        await AIInsightSnapshotService.refreshForUser(userId);
+        AIInsightSnapshotService.scheduleRefreshForUser(userId);
     }
 
 }

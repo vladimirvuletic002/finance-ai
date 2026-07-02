@@ -294,7 +294,7 @@ class AIInsightsService {
     );
 
     const recommendation =
-      await AIRecommendationService.generateSavingsRecommendation({
+      await AIRecommendationService.generateSavingsRecommendation(userId, {
         currentMonthExpenses,
         previousMonthExpenses,
         percentChange,

@@ -6,6 +6,8 @@ import { withGeminiRetry } from './ai-retry.js';
 import { resolveRequestedMonth, buildMonthKey } from './month-parser.js';
 import config from '../../config/env.js';
 
+const FALLBACK_RESPONSE = "Sorry, I couldn't process that right now. Please try again in a moment.";
+
 class AIChatService {
     private static getClient() {
         return new GoogleGenAI({
@@ -13,21 +15,27 @@ class AIChatService {
         });
     }
 
-    private static async generateText(prompt: string) {
+    // Never throws: on total Gemini failure (retries exhausted), returns a
+    // friendly fallback reply instead of surfacing a 500 to the user.
+    private static async generateText(prompt: string): Promise<string> {
         const ai = this.getClient();
 
-        const response = await withGeminiRetry(() =>
-            ai.models.generateContent({
-                model: 'gemini-2.5-flash-lite',
-                contents: prompt,
-                config: {
-                    maxOutputTokens: 180,
-                    temperature: 0.3
-                }
-            })
-        );
+        try {
+            const response = await withGeminiRetry(() =>
+                ai.models.generateContent({
+                    model: 'gemini-2.5-flash-lite',
+                    contents: prompt,
+                    config: {
+                        maxOutputTokens: 180,
+                        temperature: 0.3
+                    }
+                })
+            );
 
-        return response.text ?? '';
+            return response.text?.trim() || FALLBACK_RESPONSE;
+        } catch {
+            return FALLBACK_RESPONSE;
+        }
     }
 
     static async respond(userId: number, prompt: string) {

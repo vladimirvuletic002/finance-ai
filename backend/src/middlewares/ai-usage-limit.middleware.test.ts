@@ -1,0 +1,51 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { aiUsageLimitMiddleware } from './ai-usage-limit.middleware.js';
+import AIUsageTracker, { AI_DAILY_USAGE_LIMIT } from '../services/ai/ai-usage-tracker.js';
+import { HttpException } from '../utils/http-exception.js';
+
+// Each test uses its own userId so the tracker's per-user bucket state never
+// leaks between tests.
+let nextUserId = 2_000_000;
+function freshUserId() {
+    return nextUserId++;
+}
+
+test('rejects a request with no authenticated user', () => {
+    let error: any;
+
+    aiUsageLimitMiddleware({ user: undefined } as never, {} as never, ((err: any) => { error = err; }) as never);
+
+    assert.ok(error instanceof HttpException);
+    assert.equal(error.status, 401);
+});
+
+test('calls next with no error while quota remains', () => {
+    const userId = freshUserId();
+    let nextCalls = 0;
+    let error: any;
+
+    aiUsageLimitMiddleware(
+        { user: { id: userId } } as never,
+        {} as never,
+        ((err?: any) => { nextCalls++; error = err; }) as never
+    );
+
+    assert.equal(nextCalls, 1);
+    assert.equal(error, undefined);
+});
+
+test('passes a 429 HttpException to next once the daily quota is exhausted', () => {
+    const userId = freshUserId();
+
+    for (let i = 0; i < AI_DAILY_USAGE_LIMIT; i++) {
+        AIUsageTracker.tryConsume(userId);
+    }
+
+    let error: any;
+    aiUsageLimitMiddleware({ user: { id: userId } } as never, {} as never, ((err: any) => { error = err; }) as never);
+
+    assert.ok(error instanceof HttpException);
+    assert.equal(error.status, 429);
+    assert.equal(error.code, 'AI_USAGE_LIMIT_REACHED');
+});
