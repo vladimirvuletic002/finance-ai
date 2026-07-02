@@ -53,6 +53,11 @@ model Transaction {
 
 	user      User     @relation(fields: [userId], references: [id])
 	category  Category @relation(fields: [categoryId], references: [id])
+
+	@@index([userId, date])
+	@@index([userId, type, date])
+	@@index([userId, categoryId, date])
+	@@index([userId, merchant, date])
 }
 
 enum TransactionType {
@@ -95,7 +100,7 @@ model AIInsight {
 
 	user User @relation(fields: [userId], references: [id])
 
-	@@index([userId, year, month])
+	@@unique([userId, year, month])
 	}
 
 enum InsightType {

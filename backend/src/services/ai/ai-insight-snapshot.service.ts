@@ -9,17 +9,6 @@ class AIInsightSnapshotService {
         const month = now.getMonth() + 1;
         const year = now.getFullYear();
 
-        const existing = await prisma.aIInsight.findFirst({
-            where: {
-                userId,
-                month,
-                year
-            },
-            orderBy: {
-                updatedAt: "desc"
-            }
-        });
-
         const payload = {
             userId,
             month,
@@ -51,15 +40,10 @@ class AIInsightSnapshotService {
             }
         };
 
-        if (existing) {
-            return prisma.aIInsight.update({
-                where: { id: existing.id },
-                data: payload
-            });
-        }
-
-        return prisma.aIInsight.create({
-            data: payload
+        return prisma.aIInsight.upsert({
+            where: { userId_year_month: { userId, year, month } },
+            create: payload,
+            update: payload
         });
     }
 
