@@ -2,6 +2,7 @@ import '../styles/CreateTransaction.css';
 import '../styles/validation.css';
 import CurrencyInput from 'react-currency-input-field';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { transactionCreateApi } from '../services/TransactionService';
@@ -30,6 +31,7 @@ const validationSchema: Yup.ObjectSchema<TransactionCreatePayload> = Yup.object(
 export default function CreateTransactionPage() {
     const [categories, setCategories] = useState<ListObj[]>([]);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     // RAW vrednost bez zareza, npr. "1000.5"
     const [amountInput, setAmountInput] = useState("");
@@ -126,7 +128,7 @@ export default function CreateTransactionPage() {
                 });
 
                 setAmountInput("");
-                //navigate("/dashboard");
+                navigate("/dashboard");
             }
         } catch {
             toast.error("Failed to create transaction");

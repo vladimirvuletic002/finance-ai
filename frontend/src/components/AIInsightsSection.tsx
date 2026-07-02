@@ -1,9 +1,22 @@
 import '../styles/AIInsights.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getAIInsightsApi } from '../services/AIInsightsService';
 import type { AIInsightSnapshotResponse } from '../models/AIInsights';
 import { formatAmount } from '../utils/formatAmount';
 import { getActiveSavingsGoalApi, upsertActiveSavingsGoalApi } from '../services/SavingsGoalService';
+import api from '../services/api';
+
+// A transaction/savings-goal mutation (here or elsewhere in the app) kicks
+// off a background AI insight snapshot refresh on the server (Gemini-backed,
+// typically a few seconds). Poll a handful of times after such a mutation so
+// the UI ends up showing the fresh snapshot on its own, without blocking
+// navigation/saves on it or requiring a manual page reload.
+const REFRESH_POLL_INTERVAL_MS = 1500;
+const REFRESH_POLL_MAX_ATTEMPTS = 8;
+
+function sleep(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 export default function AIInsightsSection() {
     const [data, setData] = useState<AIInsightSnapshotResponse | null>(null);
@@ -13,16 +26,42 @@ export default function AIInsightsSection() {
     const [goalAmountInput, setGoalAmountInput] = useState("");
     const [savingGoalUpdating, setSavingGoalUpdating] = useState(false);
 
+    const mountedRef = useRef(true);
+    useEffect(() => {
+        mountedRef.current = true;
+        return () => {
+            mountedRef.current = false;
+        };
+    }, []);
 
-    const loadInsights = async () => {
-        const resp = await getAIInsightsApi();
-        setData(resp?.data || null);
-        setGoalAmountInput(String(resp?.data?.savingsGoalAmount) || "0");
+    const applyInsights = (snapshot: AIInsightSnapshotResponse | null | undefined) => {
+        setData(snapshot || null);
+        setGoalAmountInput(String(snapshot?.savingsGoalAmount) || "0");
+    };
+
+    // Polls /ai/insights/latest until the snapshot's updatedAt moves past
+    // sinceUpdatedAt (i.e. the background refresh has landed), or attempts
+    // run out — whichever comes first. Failures are treated as "not ready
+    // yet" and simply retried; this is best-effort, so it never surfaces an
+    // error of its own.
+    const pollForFreshInsights = async (sinceUpdatedAt: string | undefined) => {
+        for (let attempt = 0; attempt < REFRESH_POLL_MAX_ATTEMPTS; attempt++) {
+            await sleep(REFRESH_POLL_INTERVAL_MS);
+            if (!mountedRef.current) return;
+
+            try {
+                const refreshed = await api.get<AIInsightSnapshotResponse>('/ai/insights/latest');
+                if (refreshed?.data && refreshed.data.updatedAt !== sinceUpdatedAt) {
+                    if (mountedRef.current) applyInsights(refreshed.data);
+                    return;
+                }
+            } catch {
+                // Transient — keep polling.
+            }
+        }
     };
 
     useEffect(() => {
-        let active = true;
-
         const load = async () => {
             try {
                 setLoading(true);
@@ -33,7 +72,7 @@ export default function AIInsightsSection() {
                     getActiveSavingsGoalApi()
                 ]);
 
-                if (!active) return;
+                if (!mountedRef.current) return;
 
                 setData(insightsResp?.data || null);
 
@@ -41,20 +80,21 @@ export default function AIInsightsSection() {
                     goalResp?.data?.targetAmount ?? insightsResp?.data?.savingsGoalAmount;
 
                 setGoalAmountInput(String(goalAmount) || "0");
+
+                // Fire-and-forget: picks up a snapshot refresh that was
+                // already in flight (e.g. from a transaction just created on
+                // another page) without blocking this load on it.
+                pollForFreshInsights(insightsResp?.data?.updatedAt);
             } catch (e: any) {
-                if (!active) return;
+                if (!mountedRef.current) return;
                 const msg = e?.response?.data?.error?.message || e?.message || "Failed to load AI insights.";
                 setErr(msg);
             } finally {
-                if (active) setLoading(false);
+                if (mountedRef.current) setLoading(false);
             }
         };
 
         load();
-
-        return () => {
-            active = false;
-        };
     }, []);
 
     const handleSaveGoal = async () => {
@@ -64,15 +104,28 @@ export default function AIInsightsSection() {
 
         try {
             setSavingGoalUpdating(true);
-            await upsertActiveSavingsGoalApi({
+
+            const previousUpdatedAt = data?.updatedAt;
+            const goalResp = await upsertActiveSavingsGoalApi({
                 targetAmount: numeric,
                 currency: data?.currency || "EUR"
             });
-            await loadInsights();
+
+            if (!mountedRef.current) return;
+
+            // The goal amount itself is already committed at this point —
+            // show it immediately rather than waiting on the AI-derived
+            // fields (progress %, recommendation, etc.), which still lag
+            // behind until the background snapshot refresh completes.
+            if (goalResp?.data) {
+                setData((prev) => (prev ? { ...prev, savingsGoalAmount: goalResp.data!.targetAmount } : prev));
+            }
+
+            await pollForFreshInsights(previousUpdatedAt);
         } catch (e) {
             console.error(e);
         } finally {
-            setSavingGoalUpdating(false);
+            if (mountedRef.current) setSavingGoalUpdating(false);
         }
     };
 
