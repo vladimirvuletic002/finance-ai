@@ -18,7 +18,19 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-      
+
+  redis:
+    image: redis:7-alpine
+    container_name: finance-ai-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   backend:
     build:
       context: ./backend
@@ -28,11 +40,14 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     working_dir: /app
     env_file:
       - ./backend/.env
     environment:
       DATABASE_URL: postgresql://postgres:1234@postgres:5432/postgres?schema=public
+      REDIS_URL: redis://redis:6379
       PORT: 5003
       CHOKIDAR_USEPOLLING: "true"
     ports:

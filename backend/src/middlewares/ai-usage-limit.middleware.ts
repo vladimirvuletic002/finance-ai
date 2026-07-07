@@ -9,11 +9,11 @@ import type { AuthRequest } from './auth.middleware.js';
  * authMiddleware and after body validation, so a malformed request doesn't
  * consume quota for a call that was never going to reach Gemini.
  */
-export function aiUsageLimitMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
+export async function aiUsageLimitMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
     const userId = req.user?.id;
     if (!userId) return next(new HttpException(401, 'Unauthorized', 'UNAUTHORIZED'));
 
-    if (!AIUsageTracker.tryConsume(userId)) {
+    if (!(await AIUsageTracker.tryConsume(userId))) {
         return next(
             new HttpException(429, 'Daily AI usage limit reached. Please try again tomorrow.', 'AI_USAGE_LIMIT_REACHED')
         );

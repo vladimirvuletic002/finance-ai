@@ -10,6 +10,7 @@ const router = Router();
 
 // Protect credential endpoints against brute-force / abuse.
 const authLimiter = rateLimit({
+    name: 'auth',
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 20,
     message: 'Too many authentication attempts. Please try again later.',

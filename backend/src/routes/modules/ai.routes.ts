@@ -13,6 +13,7 @@ router.use(authMiddleware);
 
 // AI chat calls Gemini and is expensive — keep it tightly limited.
 const aiChatLimiter = rateLimit({
+    name: 'ai-chat',
     windowMs: 60 * 1000, // 1 minute
     max: 10,
     message: 'AI request limit reached. Please wait a moment before trying again.',

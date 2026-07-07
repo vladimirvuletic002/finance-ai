@@ -40,6 +40,19 @@ const envSchema = z.object({
     GEMINI_API_KEY: z
         .string({ required_error: 'GEMINI_API_KEY is required' })
         .min(1, 'GEMINI_API_KEY is required'),
+
+    // Optional. When set, the rate limiter, AI usage quota, and insight-refresh
+    // event bus use Redis (a store shared across instances) instead of
+    // per-process in-memory state. When unset, the app runs single-node with
+    // in-memory fallbacks — unchanged from before Redis was introduced.
+    REDIS_URL: z
+        .string()
+        .min(1)
+        .refine(
+            (value) => value.startsWith('redis://') || value.startsWith('rediss://'),
+            'REDIS_URL must be a redis:// or rediss:// connection string'
+        )
+        .optional(),
 });
 
 export type Config = z.infer<typeof envSchema>;

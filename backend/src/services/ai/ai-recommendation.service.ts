@@ -54,7 +54,7 @@ class AIRecommendationService {
         // mutation, so this can't be allowed to bypass the daily quota —
         // silently fall back instead of erroring, since this isn't a
         // directly user-triggered request.
-        if (!AIUsageTracker.tryConsume(userId)) {
+        if (!(await AIUsageTracker.tryConsume(userId))) {
             return FALLBACK_RECOMMENDATION;
         }
 
