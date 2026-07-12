@@ -1,0 +1,14 @@
+{
+  "name": "finance-ai",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "services/*"
+  ],
+  "scripts": {
+    "build:shared": "npm run build -w @finance-ai/shared",
+    "build": "npm run build --workspaces --if-present",
+    "dev:gateway": "npm run dev -w @finance-ai/gateway"
+  }
+}

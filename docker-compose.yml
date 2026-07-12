@@ -57,6 +57,29 @@ services:
       - backend_node_modules:/app/node_modules
     command: sh -c "npx prisma generate && npx prisma migrate deploy && npx prisma db seed && npm run dev"
 
+  # API gateway: the single public entrypoint. Reverse-proxies /api/v1/* to the
+  # backend, applies Redis-backed edge rate limiting, and exposes health probes.
+  # Built from the repo root context so the npm workspace + @finance-ai/shared
+  # are available.
+  gateway:
+    build:
+      context: .
+      dockerfile: services/gateway/Dockerfile.dev
+    container_name: finance-ai-gateway
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_started
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: development
+      PORT: 8080
+      BACKEND_URL: http://backend:5003
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "8080:8080"
+
   frontend:
     build:
       context: ./frontend
