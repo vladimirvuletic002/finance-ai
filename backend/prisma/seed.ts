@@ -15,7 +15,8 @@ const defaultCategories = [
     { name: 'Health', icon: '🏥', color: '#06b6d4' },
     { name: 'Shopping', icon: '🛍️', color: '#a855f7' },
     { name: 'Education', icon: '📚', color: '#6366f1' },
-    { name: 'Travel', icon: '✈️', color: '#0ea5e9' }
+    { name: 'Travel', icon: '✈️', color: '#0ea5e9' },
+    { name: 'Bills', icon: '🧾', color: '#64748b' }
 ];
 
 async function main() {

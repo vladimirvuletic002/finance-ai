@@ -1,0 +1,21 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// auth-svc owns the User table. It shares the same PostgreSQL as the other
+// services (transitional shared-database model), so this schema is scoped to
+// only the columns auth-svc reads/writes. Migrations are owned by the backend;
+// this schema is used for `prisma generate` ONLY — auth-svc never runs migrate.
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

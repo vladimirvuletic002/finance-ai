@@ -11,6 +11,8 @@ const config = loadEnv({
     NODE_ENV: envFields.NODE_ENV,
     PORT: envFields.port(8080),
     REDIS_URL: envFields.optionalRedisUrl,
+    // Auth is served by auth-svc; everything else still by the backend monolith.
+    AUTH_URL: z.string().url().default('http://localhost:5001'),
     BACKEND_URL: z.string().url().default('http://localhost:5003'),
 });
 

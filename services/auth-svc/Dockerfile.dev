@@ -1,4 +1,4 @@
-# Dev image for the gateway. Built from the repo ROOT context (see
+# Dev image for auth-svc. Built from the repo ROOT context (see
 # docker-compose.yml) so the npm workspace + @finance-ai/shared are available.
 FROM node:20-alpine
 
@@ -12,6 +12,10 @@ RUN npm ci
 # Build the shared package so its dist (JS + types) is available at runtime.
 RUN npm run build -w @finance-ai/shared
 
-WORKDIR /repo/services/gateway
-EXPOSE 8080
+WORKDIR /repo/services/auth-svc
+# Generate the Prisma client (scoped to User). auth-svc never runs migrations —
+# the backend owns them.
+RUN npx prisma generate
+
+EXPOSE 5001
 CMD ["npm", "run", "dev"]

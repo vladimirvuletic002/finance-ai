@@ -43,11 +43,21 @@ app.get('/readyz', async (_req, res) => {
     res.status(redis ? 200 : 503).json({ status: redis ? 'ready' : 'not-ready', checks: { redis } });
 });
 
-// Reverse-proxy every /api/v1/* request to the backend, preserving the full
-// path and body. During the strangler migration the Authorization header is
-// forwarded unchanged so the (still-monolithic) backend keeps doing auth;
-// once services are carved out, the gateway will verify the JWT here and pass
-// a trusted X-User-Id instead.
+// Route table (order matters — the more specific auth filter runs first).
+// Auth (register/login/me) is served by auth-svc; everything else under
+// /api/v1 is still served by the backend monolith. The full path is preserved
+// so services mount at their public paths. During the strangler migration the
+// Authorization header is forwarded unchanged so each service verifies the JWT
+// itself; once all services trust the gateway, it will verify once and pass a
+// trusted X-User-Id instead.
+app.use(
+    createProxyMiddleware({
+        pathFilter: '/api/v1/auth',
+        target: config.AUTH_URL,
+        changeOrigin: true,
+        xfwd: true,
+    })
+);
 app.use(
     createProxyMiddleware({
         pathFilter: '/api/v1',
